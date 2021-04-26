@@ -12,7 +12,7 @@ namespace ParserTry1
         string fullname;
         string cathedra;
 
-        List<Schedule> ScheduleList; // список с расписанием? как делить четную/нечетную недели?
+        List<Schedule> ScheduleList; // список с расписанием
 
 
 
