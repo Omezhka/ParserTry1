@@ -9,8 +9,9 @@ namespace ParserTry1
     class Teacher
     {
         // доц.Богданова О.Ю. Финансов как это делить?
-        string fullname;
-        string cathedra;
+        string position; // должность: доцент, профессор, старший препод и тд. 
+        string fullname; // Фамилия И.О.
+        string cathedra; // кафедра 
 
         List<Schedule> ScheduleList; // список с расписанием
 
