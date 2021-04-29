@@ -24,6 +24,7 @@ namespace ParserTry1
             string path = @"C:\Users\Наталья\source\repos\ParserTry1\documents\";
             //string filename = @"C:\Users\Наталья\source\repos\ParserTry1\documents\1.doc";          
             string filename = "1.doc";
+            string filenametxt = "1.txt"; 
 
             Application app = new Application();
             app.Visible = false;
@@ -36,51 +37,63 @@ namespace ParserTry1
             {
                 Convert2txt(doc);
             }
-            catch(Exception e) { Console.WriteLine(e.Message);
+            catch(Exception e) { 
+                Console.WriteLine(e.Message);
             }
-            
+            app.ActiveDocument.Close();
+
+            using (StreamReader sr = new StreamReader(path+filenametxt, System.Text.Encoding.Default))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Izveshenie.Add("\r\n" + line);
+                    Console.WriteLine(line);
+                }
+            }
 
 
+            //Microsoft.Office.Interop.Word.Document doctxt = app.Documents.OpenNoRepairDialog(path + filenametxt);
 
 
             //Microsoft.Office.Interop.Word.Document doc = app.Documents.OpenNoRepairDialog(path+filename);
             //stopwatch.Start();
             //Microsoft.Office.Interop.Word.Document doc = app.Documents.OpenNoRepairDialog(path + filename);
             //stopwatch.Stop();
-            Console.WriteLine("Open doc: " + stopwatch.ElapsedMilliseconds);
+            //Console.WriteLine("Open doc: " + stopwatch.ElapsedMilliseconds);
 
-            Console.WriteLine(doc.Paragraphs.Count);
-            try
-            {
-                for (int i = 1; i < doc.Paragraphs.Count; i++)
-                {
-                    stopwatch.Start();
-                    Izveshenie.Add("\r\n" + doc.Paragraphs[i + 1].Range.Text);
+            //Console.WriteLine(doctxt.Paragraphs.Count);
+            //try
+            //{
+            //    for (int i = 1; i < doctxt.Paragraphs.Count; i++)
+            //    {
+            //        stopwatch.Start();
+            //        Izveshenie.Add("\r\n" + doctxt.Paragraphs[i + 1].Range.Text);
 
-                    stopwatch.Stop();
+            //        stopwatch.Stop();
 
-                    Console.WriteLine("List add: " + stopwatch.ElapsedMilliseconds);
-                }
+            //        Console.WriteLine("List add: " + stopwatch.ElapsedMilliseconds);
+            //    }
 
-                doc.Close();
+            //    doc.Close();
 
-                foreach (string s in Izveshenie)
-                {
-                    Console.WriteLine(s);
-                }
-                // Console.WriteLine(text);
-                Console.WriteLine("Done");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            //    foreach (string s in Izveshenie)
+            //    {
+            //        Console.WriteLine(s);
+            //    }
+            //    // Console.WriteLine(text);
+            //    Console.WriteLine("Done");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
 
-            //LoadXceed();
+            ////LoadXceed();
             Console.ReadLine();
 
 
-            app.Quit();
+
 
         }
         //public static void Convert(string filename, string path)
