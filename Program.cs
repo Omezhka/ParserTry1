@@ -15,7 +15,7 @@ namespace ParserTry1
     {
         static void Main(string[] args)
         {
-            
+
 
             Stopwatch stopwatch = new Stopwatch();
             //string Document1 = "start";
@@ -31,44 +31,55 @@ namespace ParserTry1
             //Convert(filename, path);
             //Console.WriteLine("Done");
 
-           
-            //Microsoft.Office.Interop.Word.Document doc = app.Documents.OpenNoRepairDialog(path+filename);
-            stopwatch.Start();
             Microsoft.Office.Interop.Word.Document doc = app.Documents.OpenNoRepairDialog(path + filename);
-            stopwatch.Stop();
+            try
+            {
+                Convert2txt(doc);
+            }
+            catch(Exception e) { Console.WriteLine(e.Message);
+            }
+            
+
+
+
+
+            //Microsoft.Office.Interop.Word.Document doc = app.Documents.OpenNoRepairDialog(path+filename);
+            //stopwatch.Start();
+            //Microsoft.Office.Interop.Word.Document doc = app.Documents.OpenNoRepairDialog(path + filename);
+            //stopwatch.Stop();
             Console.WriteLine("Open doc: " + stopwatch.ElapsedMilliseconds);
 
             Console.WriteLine(doc.Paragraphs.Count);
             try
             {
-                for (int i = 1; i < doc.Paragraphs.Count; i++ )
+                for (int i = 1; i < doc.Paragraphs.Count; i++)
                 {
                     stopwatch.Start();
                     Izveshenie.Add("\r\n" + doc.Paragraphs[i + 1].Range.Text);
-                   
+
                     stopwatch.Stop();
-                    
+
                     Console.WriteLine("List add: " + stopwatch.ElapsedMilliseconds);
                 }
 
-            doc.Close();
+                doc.Close();
 
                 foreach (string s in Izveshenie)
                 {
                     Console.WriteLine(s);
                 }
-               // Console.WriteLine(text);
+                // Console.WriteLine(text);
                 Console.WriteLine("Done");
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
             //LoadXceed();
             Console.ReadLine();
-            
-            
+
+
             app.Quit();
 
         }
@@ -110,5 +121,20 @@ namespace ParserTry1
         //    string txt = doc.Text;
         //    DateTime.Parse(txt);
         //}
+
+        public static void Convert2txt(Microsoft.Office.Interop.Word.Document doc)
+        {
+            Application word = new Application();
+
+            //string fullpath = (path + filename);
+
+            var sourceFile = new FileInfo(doc.Path);
+            Microsoft.Office.Interop.Word.Document document = doc;
+            string newFileName = doc.FullName.Replace(".doc", ".txt");
+            //string newFileName = $"{path}" + "new.docx";
+            document.SaveAs2(newFileName, WdSaveFormat.wdFormatText);
+            //document.Convert();
+            
+        }
     }
 }
