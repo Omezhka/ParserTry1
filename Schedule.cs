@@ -2,29 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ParserTry1
 {
-    class Schedule
+    public class Schedule
     {
-        bool week; // неделя 
-        string occupation; // вид занятий: лекция/практика/лабораторная
-                           // не знаю нужно ли это выносить в отдельное поле
-        string subject; // название предмета
-        string days; // дни пар (у очьки дни недели, а у магистров/заочьки - даты, поэтому я чет хз)
-        string classhours; // время пары (13.50-15.20)
-        string audience; // тоже строка, там иногда аудитории с буквами или символами (*412, 429д)
-        string group; // группа. Мб несколько групп на одной паре
+        public Schedule() { }
+        public Schedule(string s)
+        {
+            var schedulerRegex = new Regex(Pattern.scheduleItem);
 
-        // тут еще такая штука есть справочная, она должна быть в расписании на стенде по идее
-
-        // Аудитории отмеченные буквой "д", обозначают занятия посредством ЭИОС
-        // (!) Аудитории второго корпуса Островского, 62  помечены символом *
-        // (!) Аудитории третьего корпуса Горького, 166    помечены символом #
-        // (!) Аудитории четвертого корпуса Тургеневская, 49 помечены символом &
-        // Специалист отдела ОУП и ККО Бусова О.В.
-
-
+            //Week = schedulerRegex.Match(s).Groups["week"];                      присвоить в другом месте
+            subject = schedulerRegex.Match(s).Groups["subject"].ToString().Trim();
+            days = schedulerRegex.Match(s).Groups["days"].ToString().Trim();
+            classhours = schedulerRegex.Match(s).Groups["classhours"].ToString().Trim();
+            audience = schedulerRegex.Match(s).Groups["audience"].ToString().Trim();
+            group = schedulerRegex.Match(s).Groups["group"].ToString().Trim();
+        }
+        /// <summary>
+        /// тип недели чёт/нечёт (true/false)
+        /// </summary>        
+        public bool Week { get; set; }
+        public string subject { get; set; }
+        public string days { get; set; }
+        public string classhours { get; set; }
+        public string audience { get; set; }
+        public string group { get; set; }
     }
 }

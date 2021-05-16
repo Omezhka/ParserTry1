@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 
 namespace ParserTry1
 {
-    class Teacher
+    public class Teacher
+
     {
-        // доц.Богданова О.Ю. Финансов как это делить?
-        string position; // должность: доцент, профессор, старший препод и тд. 
-        string fullname; // Фамилия И.О.
-        string cathedra; // кафедра 
-
-        List<Schedule> ScheduleList; // список с расписанием
-
-
+        /// <summary>
+        /// должность: доцент, профессор, старший препод и тд. 
+        /// </summary>
+        public string position { get; set; }
+        /// <summary>
+        /// / Фамилия И.О.
+        /// </summary>
+        public string fullname { get; set; }
+        /// <summary>
+        /// кафедра
+        /// </summary>
+        public string cathedra { get; set; }
 
     }
 }
