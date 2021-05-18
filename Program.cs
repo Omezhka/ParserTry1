@@ -61,27 +61,28 @@ namespace regexpParse
             { 
                 if (regHeader.IsMatch(izv[i]))
                 {
+                    var izvHeaderCathedra = regHeader.Match(izv[i]).Groups["cathedra"].ToString(); // берём название кафедры из заголовка
                     var izvItem = new List<string>();
                     while (izv[i] != "         Специалист отдела ОУП и ККО Бусова О.В.")
                     {
                         izvItem.Add(izv[i]);
                         i++;
                     }
-                    notifications.Add(new Notification(izvItem));
+                    if (izvHeaderCathedra == "Информационных технологий и за") // сравниваем название кафедры с нужной, и если совпало - добавляем в список распарщеных извещений
+                    {
+                        notifications.Add(new Notification(izvItem));
+                    }
                 }
                 i++;
             }
 
             foreach (var z in notifications)
-            {
-                if (z.teacher.cathedra == "Информационных технологий и за")
-                {
+            {            
                     Console.WriteLine($"{z.teacher.position} {z.teacher.fullname} {z.teacher.cathedra}");
                     foreach (var y in z.scheduleList)
                     {
                         Console.WriteLine($"{y.group} {y.Week}");
                     }
-                }
             }
 
             var options = new JsonSerializerOptions
