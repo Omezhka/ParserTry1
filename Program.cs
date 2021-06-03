@@ -92,8 +92,7 @@ namespace regexpParse
             };
 
             string json = JsonSerializer.Serialize(notifications, options);
-            //Console.WriteLine(json);
-
+    
             string writePath = @"C:\Users\Наталья\source\repos\ParserTry1\documents\hta.txt";
 
             try
@@ -113,19 +112,12 @@ namespace regexpParse
             Console.ReadKey();
         }
 
-        public static void Convert2txt(Microsoft.Office.Interop.Word.Document doc)
+        public static void Convert2txt(Document doc)
         {
             Application word = new Application();
-
-            //string fullpath = (path + filename);
-
             var sourceFile = new FileInfo(doc.Path);
-            Microsoft.Office.Interop.Word.Document document = doc;
-            string newFileName = doc.FullName.Replace(".doc", ".txt");
-            //string newFileName = $"{path}" + "new.docx";
-            document.SaveAs2(newFileName, WdSaveFormat.wdFormatText);
-            //document.Convert();
-
+            string newFileName = doc.FullName.Replace(".doc", ".txt");         
+            doc.SaveAs2(newFileName, WdSaveFormat.wdFormatText);
         }
     }
 }
