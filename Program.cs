@@ -2,7 +2,9 @@
 using ParserTry1;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -13,6 +15,7 @@ namespace regexpParse
 {
     class Program
     {
+
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -77,13 +80,44 @@ namespace regexpParse
             }
 
             foreach (var z in notifications)
-            {            
-                    Console.WriteLine($"{z.teacher.position} {z.teacher.fullname} {z.teacher.cathedra}");
-                    foreach (var y in z.scheduleList)
-                    {
-                        Console.WriteLine($"{y.group} {y.Week}");
-                    }
+            {
+                switch (z.teacher.position)
+                {
+                    case "доц.":
+                        z.teacher.position = "Доцент";
+                        break;
+                    case "ст.пр.":
+                        z.teacher.position = "Старший преподаватель";
+                        break;
+                    case "асс.":
+                        z.teacher.position = "Aссистент";
+                        break;
+                    case "проф.":
+                        z.teacher.position = "Профессор";
+                        break;
+                }
+
+                var teacherfullnameLower = z.teacher.fullname.ToLower();
+               
+                TextInfo myTI = new CultureInfo("ru-RU", false).TextInfo;
+               z.teacher.fullname = myTI.ToTitleCase(teacherfullnameLower);
+                Console.WriteLine(z.teacher.fullname);
+
+                //Console.WriteLine($"{z.teacher.position} {z.teacher.fullname} {z.teacher.cathedra}");
+                //foreach (var y in z.scheduleList)
+                //{
+                //    Console.WriteLine($"{y.group} {y.Week}");
+                //}
             }
+
+            //foreach (var z in notifications)
+            //{            
+            //        Console.WriteLine($"{z.teacher.position} {z.teacher.fullname} {z.teacher.cathedra}");
+            //        foreach (var y in z.scheduleList)
+            //        {
+            //            Console.WriteLine($"{y.group} {y.Week}");
+            //        }
+            //}
 
             var options = new JsonSerializerOptions
             {
@@ -108,6 +142,100 @@ namespace regexpParse
             {
                 Console.WriteLine(e.Message);
             }
+
+           
+            var jsonString = File.ReadAllText(writePath);
+            var notificationsFromJson = JsonSerializer.Deserialize<List<Notification>>(jsonString);
+
+
+
+            app.Visible = true;
+            
+            Document docTable = app.Documents.Add();
+            docTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+            //Range rng = docTable.Paragraphs[1].Range;
+           docTable.Paragraphs.Add();
+            //docTable.Paragraphs.Add();
+            //docTable.Paragraphs.Add();
+            //docTable.Paragraphs.Add();
+            //docTable.Paragraphs.Add();
+            //docTable.Paragraphs.Add();
+            //docTable.Paragraphs.Add();
+            //var textparagraph = docTable.Paragraphs[1];
+            //Range textrange = textparagraph.Range;
+            //textrange.Text = "РАСПИСАНИЕ ЗАНЯТИЙ ПРЕПОДАВАТЕЛЕЙ КАФЕДРЫ";
+            //var textparagraph2 = docTable.Paragraphs[2];
+            //Range textrange2 = textparagraph2.Range;
+            //textrange2.Text = "ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И ЗАЩИТЫ ИНФОРМАЦИИ";
+            //var textparagraph3 = docTable.Paragraphs[3];
+            //Range textrange3 = textparagraph3.Range;
+            //textrange3.Text = "НА 1 - е ПОЛУГОДИЕ 2020 / 2021 УЧЕБНОГО ГОДА";
+
+            //var tableparagraph = docTable.Paragraphs[4];
+            //Range tablerange = tableparagraph.Range; /*docTable.Range(ref start, ref end);*/
+            //Object defaultTableBehavior = WdDefaultTableBehavior.wdWord9TableBehavior;
+            //Object autoFitBehavior = WdAutoFitBehavior.wdAutoFitWindow;
+            ////Добавляем таблицу и получаем объект wordtable 
+            //Table wordtable = docTable.Tables.Add(tablerange, 5, 7, ref defaultTableBehavior, ref autoFitBehavior);
+
+            var tableparagraph = docTable.Paragraphs[1];
+            Range rng = tableparagraph.Range;
+
+            rng.InsertBefore("РАСПИСАНИЕ ЗАНЯТИЙ ПРЕПОДАВАТЕЛЕЙ КАФЕДРЫ " +
+                "ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И ЗАЩИТЫ ИНФОРМАЦИИ " +
+                "НА 1 - е ПОЛУГОДИЕ 2020 / 2021 УЧЕБНОГО ГОДА");
+            rng.InsertParagraphAfter();
+            rng.Font.Name = "Times New Roman";
+            rng.Font.Size = 16;
+            rng.Font.Bold = 1;
+            rng.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            rng.InsertParagraphAfter();
+            rng.InsertParagraphAfter();
+            rng.SetRange(rng.End, rng.End);
+
+            var teacherCount = notifications.Count();
+            
+            
+
+            rng.Tables.Add(docTable.Paragraphs[5].Range, teacherCount, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
+
+            Table tbl = docTable.Tables[1];
+            tbl.Range.Font.Size = 10;
+            
+            tbl.Columns.DistributeWidth();
+            tbl.Rows[1].Range.Font.Bold = 1;
+            
+
+
+            tbl.Cell(1, 1).Range.Text = "Ф.И.О. преподавателя";
+            tbl.Cell(1, 2).Range.Text = "Понедельник";
+            tbl.Cell(1, 3).Range.Text = "Вторник";
+            tbl.Cell(1, 4).Range.Text = "Среда";
+            tbl.Cell(1, 5).Range.Text = "Четверг";
+            tbl.Cell(1, 6).Range.Text = "Пятница";
+            tbl.Cell(1, 7).Range.Text = "Суббота";
+
+            for(i = 2; i < teacherCount;)
+            {
+                foreach (var z in notifications)
+                {
+                    tbl.Cell(i, 1).Range.Text = $"{z.teacher.position} {z.teacher.fullname}";
+                    i++;
+                }
+
+            }
+
+            //tbl.Cell(2, 1).Range.Text = " ";
+            //tbl.Cell(2, 2).Range.Text = " w ";
+
+            //tbl.Cell(3, 1).Range.Text = "Author";
+            //tbl.Cell(3, 2).Range.Text = " ww ";
+
+            //using (StreamReader sr = new StreamReader(writePath))
+            //{
+            //    List<Notification> notifDes = JsonConvert.DeserializeObject<List<Notification>>(json);
+            //    Console.WriteLine(notifDes);
+            //}
 
             Console.ReadKey();
         }
