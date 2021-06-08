@@ -3,7 +3,8 @@
     "teacher": {
       "position": "Старший преподаватель",
       "fullname": "Арапова Е.А.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -84,7 +85,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Ефимова Е.В.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -157,7 +159,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Жилина Е.В.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -270,7 +273,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Кравченко О.Ю.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -511,7 +515,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Лапсарь А.П.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -576,7 +581,8 @@
     "teacher": {
       "position": "Старший преподаватель",
       "fullname": "Лозина Е.Н.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -649,7 +655,8 @@
     "teacher": {
       "position": "Старший преподаватель",
       "fullname": "Назарян С.А.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -794,7 +801,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Попова Л.К.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -875,7 +883,8 @@
     "teacher": {
       "position": "Ассистент",
       "fullname": "Палютина Г.Н.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -980,7 +989,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Плетняков В.А.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1069,7 +1079,8 @@
     "teacher": {
       "position": "Старший преподаватель",
       "fullname": "Полякова О.В.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1094,7 +1105,8 @@
     "teacher": {
       "position": "Старший преподаватель",
       "fullname": "Прохоров А.И.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1255,7 +1267,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Радченко Юр.Вл.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1328,7 +1341,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Рутта Н.А.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1561,7 +1575,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Серпенинов О.В.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1682,7 +1697,8 @@
     "teacher": {
       "position": "Старший преподаватель",
       "fullname": "Савская А.Р.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1859,7 +1875,8 @@
     "teacher": {
       "position": "Профессор",
       "fullname": "Тищенко Е.Н.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1876,7 +1893,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Федорова Я.В.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -1981,7 +1999,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Черкезов С.Е.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -2198,7 +2217,8 @@
     "teacher": {
       "position": "Ассистент",
       "fullname": "Черкесов Д.Б.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -2319,7 +2339,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Шейдаков Н. Е.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {
@@ -2432,7 +2453,8 @@
     "teacher": {
       "position": "Доцент",
       "fullname": "Шарыпова Т.Н.",
-      "cathedra": "Информационных технологий и за"
+      "cathedra": "Информационных технологий и за",
+      "scheduleList": null
     },
     "scheduleList": [
       {

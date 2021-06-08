@@ -8,6 +8,16 @@ namespace ParserTry1
     /// </summary>
     public class Notification
     {
+
+        /// <summary>
+        /// препод
+        /// </summary>
+        public Teacher teacher { get; set; }
+        /// <summary>
+        /// список строк из извещения
+        /// </summary>
+        public List<Schedule> scheduleList { get; set; }
+
         public Notification(List<string> izvItem)
         {
             int i = 0;
@@ -63,13 +73,6 @@ namespace ParserTry1
             }
 
         }
-        /// <summary>
-        /// препод
-        /// </summary>
-        public Teacher teacher { get; set; }
-        /// <summary>
-        /// список строк из извещения
-        /// </summary>
-        public List<Schedule> scheduleList { get; set; }
+        
     }
 }

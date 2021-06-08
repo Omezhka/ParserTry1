@@ -101,7 +101,6 @@ namespace regexpParse
                
                 TextInfo myTI = new CultureInfo("ru-RU", false).TextInfo;
                z.teacher.fullname = myTI.ToTitleCase(teacherfullnameLower);
-                Console.WriteLine(z.teacher.fullname);
 
                 Console.WriteLine($"{z.teacher.position} {z.teacher.fullname} {z.teacher.cathedra}");
                 foreach (var y in z.scheduleList)
@@ -110,7 +109,7 @@ namespace regexpParse
                 }
             }
 
-            
+
 
             var options = new JsonSerializerOptions
             {
@@ -136,13 +135,31 @@ namespace regexpParse
                 Console.WriteLine(e.Message);
             }
 
-           
+            var options1 = new JsonSerializerOptions
+            {
+                IncludeFields = true,
+            };
+
             var jsonString = File.ReadAllText(writePath);
-            //var notificationsFromJson = JsonSerializer.Deserialize<List<Notification>>(jsonString);
+            //var notificationsFromJson = JsonSerializer.Deserialize<List<Teacher>>(jsonString, options1);
+            //foreach(var t in notificationsFromJson)
+            //{
+            //    if (!t.fullname.Equals(null))
+            //    {
+            //        Console.WriteLine(t.fullname.Length);
+            //        Console.WriteLine(notificationsFromJson.Count);
+            //        Console.WriteLine(t.fullname + " fffff1");
+            //        Console.WriteLine(t.position + " fffff2");
+            //        Console.WriteLine(t.cathedra + " fffff3");
+            //    } else
+            //    {
+            //        Console.WriteLine("shit");
+            //    }
+            //}
 
             app.Visible = true;
+
             var teacherCount = notifications.Count();
-            
             Document docTable = app.Documents.Add();
             docTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
             docTable.Paragraphs.Add();
@@ -158,15 +175,13 @@ namespace regexpParse
             rng.Font.Bold = 1;
             rng.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
         
-            rng.Tables.Add(docTable.Paragraphs[3].Range, teacherCount, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitContent);
+            rng.Tables.Add(docTable.Paragraphs[3].Range, teacherCount, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
 
             Table tbl = docTable.Tables[1];
             tbl.Range.Font.Size = 10;
             
             tbl.Columns.DistributeWidth();
             tbl.Rows[1].Range.Font.Bold = 1;
-            
-
 
             tbl.Cell(1, 1).Range.Text = "Ф.И.О. преподавателя";
             tbl.Cell(1, 2).Range.Text = "Понедельник";
@@ -176,29 +191,41 @@ namespace regexpParse
             tbl.Cell(1, 6).Range.Text = "Пятница";
             tbl.Cell(1, 7).Range.Text = "Суббота";
 
-            for(i = 2; i < teacherCount;)
+            var week = new List<string>
             {
-                foreach (var z in notifications)
-                {
-                    tbl.Cell(i, 1).Range.Text = $"{z.teacher.position} {z.teacher.fullname}";
-                    i++;
-                }
+                "пнд",
+                "втp",
+                "сpд",
+                "чтв",
+                "птн",
+                "сбт"
+            };
 
+            var j = 0;
+            for (i = 2; i <= teacherCount+1;)
+            {
+                    tbl.Cell(i, 1).Range.Text = $"{ notifications[j].teacher.position} { notifications[j].teacher.fullname}";
+                    i++;
+                    j++;
             }
 
-            //tbl.Cell(2, 1).Range.Text = " ";
-            //tbl.Cell(2, 2).Range.Text = " w ";
+            for (i = 0; i < teacherCount ; i++) //столбец
+            {
+                for(var k=0; k < notifications[i].scheduleList.Count; k++) // строка
+                {
+                    int indexDayPosition=0;            
+                    indexDayPosition = week.IndexOf(notifications[i].scheduleList[k].days); 
+                    tbl.Cell(i+2, indexDayPosition+2).Range.InsertAfter(notifications[i].scheduleList[k].subject);            
+                }
+            }
 
-            //tbl.Cell(3, 1).Range.Text = "Author";
-            //tbl.Cell(3, 2).Range.Text = " ww ";
+                //tbl.Cell(2, 1).Range.Text = " ";
+                //tbl.Cell(2, 2).Range.Text = " w ";
 
-            //using (StreamReader sr = new StreamReader(writePath))
-            //{
-            //    List<Notification> notifDes = JsonConvert.DeserializeObject<List<Notification>>(json);
-            //    Console.WriteLine(notifDes);
-            //}
+                //tbl.Cell(3, 1).Range.Text = "Author";
+                //tbl.Cell(3, 2).Range.Text = " ww ";
 
-            Console.ReadKey();
+                Console.ReadKey();
         }
 
         public static void Convert2txt(Document doc)
