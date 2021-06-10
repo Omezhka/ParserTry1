@@ -78,7 +78,7 @@ namespace regexpParse
                 }
                 i++;
             }
-
+            //ну тут меняю сокращенные позишны на полные, шоб в расписании красиво выглядело
             foreach (var z in notifications)
             {
                 switch (z.teacher.position)
@@ -142,9 +142,11 @@ namespace regexpParse
             app.Visible = true;
 
             var teacherCount = notifications.Count();
-
+            //тут создаю новый док, задаю ему альбомную ориентацию
             Document docTable = app.Documents.Add();
             docTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+           // тут какие-то замуты с параграфами, я не до конца выкупила, но если строчку ниже убрать,
+           // то таблица принимает стили текста перед таблицей 
             docTable.Paragraphs.Add();
 
             Range rng = docTable.Paragraphs[1].Range;
@@ -153,19 +155,21 @@ namespace regexpParse
                 "ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И ЗАЩИТЫ ИНФОРМАЦИИ " +
                 "НА 1 - е ПОЛУГОДИЕ 2020 / 2021 УЧЕБНОГО ГОДА");
             rng.InsertParagraphAfter();
+            //собсна, стили текста выше
             rng.Font.Name = "Times New Roman";
             rng.Font.Size = 16;
             rng.Font.Bold = 1;
             rng.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-        
+        //добавление таблицы в третий параграф, кол-во строк = кол-во нотификейшнов, 7 столбцов, дальше какие-то настройки таблицы
             rng.Tables.Add(docTable.Paragraphs[3].Range, teacherCount+1, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
 
+            //тут всё закручено на Range
             Table tbl = docTable.Tables[1];
             tbl.Range.Font.Size = 10;
-            
+            //это настройки таблицы
             tbl.Columns.DistributeWidth();
             tbl.Rows[1].Range.Font.Bold = 1;
-
+            // ну, заполнение шапки таблицы))
             tbl.Cell(1, 1).Range.Text = "Ф.И.О. преподавателя";
             tbl.Cell(1, 2).Range.Text = "Понедельник";
             tbl.Cell(1, 3).Range.Text = "Вторник";
@@ -173,7 +177,7 @@ namespace regexpParse
             tbl.Cell(1, 5).Range.Text = "Четверг";
             tbl.Cell(1, 6).Range.Text = "Пятница";
             tbl.Cell(1, 7).Range.Text = "Суббота";
-
+            // этот список для раскидывания занятий по ячейкам соотв. дня недели
             var week = new List<string>
             {
                 "пнд",
@@ -183,7 +187,7 @@ namespace regexpParse
                 "птн",
                 "сбт"
             };
-
+            // вывод преподов 
             for (i = 2; i <= teacherCount+1;)
             {
                     tbl.Cell(i, 1).Range.Text = $"{notifications[i-2].teacher.position} {notifications[i-2].teacher.fullname}";
@@ -191,7 +195,8 @@ namespace regexpParse
                    
             }
             //tbl.Cell(2,2).Split(2);
-            
+            // тут как раз таки заполнение таблицы, тут нафигачила ненужных списков(как мне кажется) пар по четной и нечетной неделе
+            // пытаюсь вывести расписание по четности недели
             for (i = 0; i < teacherCount; i++) //столбец
             {
                 for(var k=0; k < notifications[i].scheduleList.Count; k++) // строка
@@ -221,6 +226,7 @@ namespace regexpParse
                             //                                                                   $"{notifications[i].scheduleList[k].group} " +
                             //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
                         }
+                    // сейчас выводит пары по четной недели, потому что у меня была такая тактика, и я ее придерживалась
                         foreach (var w in trueWeekSchedule)
                         {
                         tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("zhopa");
@@ -237,9 +243,13 @@ namespace regexpParse
 
 
            //app.Visible = false;
-
+           // тут я создаю новый документ с расписанием одного препода
+           // не пониманию как их создать много
+           
             Document teacherScheduleTable = app.Documents.Add();
+            //тут как раз таки плодится много документов с фио каждого препода
             var nameOfFile=new List<string>();
+
             foreach (var t in notifications)
              {
                     var filenamedd = @"C:\Users\Наталья\source\repos\ParserTry1\documents\prepods\" + t.teacher.fullname + ".docx";
@@ -247,10 +257,11 @@ namespace regexpParse
                     nameOfFile.Add(System.IO.Path.GetFileName(filenamedd));
                 
              }
-
-            
+            // а рисуется только в последнем созданном доке
+            // свойства
                 teacherScheduleTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
                 teacherScheduleTable.Paragraphs.Add();
+            //это по аналогии с предыдущим доком
                 var classhours = new List<string>
                 {
                     "08.30-10.00",
@@ -297,7 +308,7 @@ namespace regexpParse
 
                 }
                     //tbl.Cell(2,2).Split(2);
-
+                    //тут та же проблема с определением четности
                     for (i = 0; i < classhours.Count; i++) //столбец
                     {
                         for (var k = 0; k < notifications[i].scheduleList.Count; k++) // строка
@@ -329,6 +340,8 @@ namespace regexpParse
                             }
                             foreach (var w in trueWeekSchedule)
                             {
+                        // тут я пыталась обмануть судьбу и сравнивать название файла и фамилию препода и выводить его расписание,
+                        // но что-то пошло не так
                                 foreach (var item in nameOfFile)
                                 {
                                     if ((notifications[i].teacher.fullname + ".docx").Equals(item[i]))
