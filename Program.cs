@@ -135,31 +135,14 @@ namespace regexpParse
                 Console.WriteLine(e.Message);
             }
 
-            var options1 = new JsonSerializerOptions
-            {
-                IncludeFields = true,
-            };
-
-            var jsonString = File.ReadAllText(writePath);
+            //var jsonString = File.ReadAllText(writePath);
             //var notificationsFromJson = JsonSerializer.Deserialize<List<Teacher>>(jsonString, options1);
-            //foreach(var t in notificationsFromJson)
-            //{
-            //    if (!t.fullname.Equals(null))
-            //    {
-            //        Console.WriteLine(t.fullname.Length);
-            //        Console.WriteLine(notificationsFromJson.Count);
-            //        Console.WriteLine(t.fullname + " fffff1");
-            //        Console.WriteLine(t.position + " fffff2");
-            //        Console.WriteLine(t.cathedra + " fffff3");
-            //    } else
-            //    {
-            //        Console.WriteLine("shit");
-            //    }
-            //}
+
 
             app.Visible = true;
 
             var teacherCount = notifications.Count();
+
             Document docTable = app.Documents.Add();
             docTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
             docTable.Paragraphs.Add();
@@ -209,7 +192,7 @@ namespace regexpParse
             }
             //tbl.Cell(2,2).Split(2);
             
-            for (i = 0; i < teacherCount ; i++) //столбец
+            for (i = 0; i < teacherCount; i++) //столбец
             {
                 for(var k=0; k < notifications[i].scheduleList.Count; k++) // строка
                 {
@@ -238,7 +221,6 @@ namespace regexpParse
                             //                                                                   $"{notifications[i].scheduleList[k].group} " +
                             //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
                         }
-                        
                         foreach (var w in trueWeekSchedule)
                         {
                         tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("zhopa");
@@ -249,14 +231,124 @@ namespace regexpParse
                         }
                     
                 }
-            }  
-                Console.ReadKey();
+            }
+
+
+
+
+           //app.Visible = false;
+
+            Document teacherScheduleTable = app.Documents.Add();
+            var nameOfFile=new List<string>();
+            foreach (var t in notifications)
+             {
+                    var filenamedd = @"C:\Users\Наталья\source\repos\ParserTry1\documents\prepods\" + t.teacher.fullname + ".docx";
+                    teacherScheduleTable.SaveAs2(filenamedd, WdSaveFormat.wdFormatDocumentDefault);
+                    nameOfFile.Add(System.IO.Path.GetFileName(filenamedd));
+                
+             }
+
+            
+                teacherScheduleTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+                teacherScheduleTable.Paragraphs.Add();
+                var classhours = new List<string>
+                {
+                    "08.30-10.00",
+                    "10.10-11.40",
+                    "11.50-13.20",
+                    "13.50-15.20",
+                    "15.30-17.00",
+                    "17.10-18.40"
+                };
+
+                Range rngtst = teacherScheduleTable.Paragraphs[1].Range;
+
+                rngtst.InsertBefore("РАСПИСАНИЕ ВАШИХ ЗАНЯТИЙ НА 1 - е ПОЛУГОДИЕ 2020 / 2021 УЧЕБНОГО ГОДА");
+                rngtst.InsertParagraphAfter();
+                rngtst.Font.Name = "Times New Roman";
+                rngtst.Font.Size = 16;
+                rngtst.Font.Bold = 1;
+                rngtst.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+            
+
+                rngtst.Tables.Add(teacherScheduleTable.Paragraphs[3].Range, classhours.Count + 1, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
+
+                Table tbltst = teacherScheduleTable.Tables[1];
+                tbltst.Range.Font.Size = 10;
+
+                tbltst.Columns.DistributeWidth();
+
+                tbltst.Rows[1].Range.Font.Bold = 1;
+
+                tbltst.Cell(1, 1).Range.Text = " ";
+                tbltst.Cell(1, 2).Range.Text = "Понедельник";
+                tbltst.Cell(1, 3).Range.Text = "Вторник";
+                tbltst.Cell(1, 4).Range.Text = "Среда";
+                tbltst.Cell(1, 5).Range.Text = "Четверг";
+                tbltst.Cell(1, 6).Range.Text = "Пятница";
+                tbltst.Cell(1, 7).Range.Text = "Суббота";
+ 
+
+                for (i = 2; i <= classhours.Count +1;)
+                {
+                    tbltst.Cell(i, 1).Range.Text = classhours[i-2];
+                    i++;
+
+                }
+                    //tbl.Cell(2,2).Split(2);
+
+                    for (i = 0; i < classhours.Count; i++) //столбец
+                    {
+                        for (var k = 0; k < notifications[i].scheduleList.Count; k++) // строка
+                        {
+                            var indexDayPosition = 0;
+                            var indexClasshoursPosition = 0; 
+                            var trueWeekSchedule = new List<string>();
+                            var falseWeekSchedule = new List<string>();
+                            indexDayPosition = week.IndexOf(notifications[i].scheduleList[k].days);
+                            indexClasshoursPosition = classhours.IndexOf(notifications[i].scheduleList[k].classhours);
+
+                            if (notifications[i].scheduleList[k].Week)
+                            {
+                                trueWeekSchedule.Add($" { notifications[i].teacher.fullname} {notifications[i].scheduleList[k].group}" +
+                                                     $" {"a." + notifications[i].scheduleList[k].audience}");
+
+                                //    tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("чет: " + $"{notifications[i].scheduleList[k].classhours}" +
+                                //                                                                     $" {notifications[i].scheduleList[k].group}" +
+                                //                                                                     $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
+                            }
+                            else
+                            {
+                                falseWeekSchedule.Add($" {notifications[i].scheduleList[k].group}" +
+                                                     $" {"a." + notifications[i].scheduleList[k].audience}");
+
+                                //tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("нечет: " + $"{notifications[i].scheduleList[k].classhours} " +
+                                //                                                                   $"{notifications[i].scheduleList[k].group} " +
+                                //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
+                            }
+                            foreach (var w in trueWeekSchedule)
+                            {
+                                foreach (var item in nameOfFile)
+                                {
+                                    if ((notifications[i].teacher.fullname + ".docx").Equals(item[i]))
+                                        tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($" { notifications[i].teacher.fullname} {notifications[i].scheduleList[k].group}" +
+                                                                                                            $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
+                                }
+                                    //tbltst.Cell(i+1, indexDayPosition+2).Range.InsertAfter("zhopa");
+                                
+                            }
+                        }
+                    
+
+                    }
+            
+
+            Console.ReadKey();
         }
 
         public static void Convert2txt(Document doc)
-        {
-            Application word = new Application();
-            var sourceFile = new FileInfo(doc.Path);
+        { 
             string newFileName = doc.FullName.Replace(".doc", ".txt");         
             doc.SaveAs2(newFileName, WdSaveFormat.wdFormatText);
         }
