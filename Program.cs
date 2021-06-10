@@ -175,7 +175,7 @@ namespace regexpParse
             rng.Font.Bold = 1;
             rng.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
         
-            rng.Tables.Add(docTable.Paragraphs[3].Range, teacherCount, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
+            rng.Tables.Add(docTable.Paragraphs[3].Range, teacherCount+1, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
 
             Table tbl = docTable.Tables[1];
             tbl.Range.Font.Size = 10;
@@ -201,30 +201,55 @@ namespace regexpParse
                 "сбт"
             };
 
-            var j = 0;
             for (i = 2; i <= teacherCount+1;)
             {
-                    tbl.Cell(i, 1).Range.Text = $"{ notifications[j].teacher.position} { notifications[j].teacher.fullname}";
+                    tbl.Cell(i, 1).Range.Text = $"{notifications[i-2].teacher.position} {notifications[i-2].teacher.fullname}";
                     i++;
-                    j++;
+                   
             }
-
+            //tbl.Cell(2,2).Split(2);
+            
             for (i = 0; i < teacherCount ; i++) //столбец
             {
                 for(var k=0; k < notifications[i].scheduleList.Count; k++) // строка
                 {
-                    int indexDayPosition=0;            
-                    indexDayPosition = week.IndexOf(notifications[i].scheduleList[k].days); 
-                    tbl.Cell(i+2, indexDayPosition+2).Range.InsertAfter(notifications[i].scheduleList[k].subject);            
+                    int indexDayPosition = 0;
+                    var trueWeekSchedule = new List<string>();
+                    var falseWeekSchedule = new List<string>();
+                    indexDayPosition = week.IndexOf(notifications[i].scheduleList[k].days);
+                    
+                    if (notifications[i].scheduleList[k].Week)
+                    {
+                        trueWeekSchedule.Add($"{notifications[i].scheduleList[k].classhours}" +
+                                             $" {notifications[i].scheduleList[k].group}" +
+                                             $" {"a." + notifications[i].scheduleList[k].audience}");
+
+                    //    tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("чет: " + $"{notifications[i].scheduleList[k].classhours}" +
+                    //                                                                     $" {notifications[i].scheduleList[k].group}" +
+                    //                                                                     $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
+                    }
+                        else
+                        {
+                            falseWeekSchedule.Add($"{notifications[i].scheduleList[k].classhours}" +
+                                                 $" {notifications[i].scheduleList[k].group}" +
+                                                 $" {"a." + notifications[i].scheduleList[k].audience}");
+
+                            //tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("нечет: " + $"{notifications[i].scheduleList[k].classhours} " +
+                            //                                                                   $"{notifications[i].scheduleList[k].group} " +
+                            //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
+                        }
+                        
+                        foreach (var w in trueWeekSchedule)
+                        {
+                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("zhopa");
+
+                            tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($"{notifications[i].scheduleList[k].classhours}" +
+                                                                                             $" {notifications[i].scheduleList[k].group}" +
+                                                                                            $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
+                        }
+                    
                 }
-            }
-
-                //tbl.Cell(2, 1).Range.Text = " ";
-                //tbl.Cell(2, 2).Range.Text = " w ";
-
-                //tbl.Cell(3, 1).Range.Text = "Author";
-                //tbl.Cell(3, 2).Range.Text = " ww ";
-
+            }  
                 Console.ReadKey();
         }
 
