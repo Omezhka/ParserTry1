@@ -27,7 +27,7 @@ namespace regexpParse
             //путь для выходных
             string filename = path + "1.doc";
 
-            string filenametxt = path + "1.txt";
+            string filenametxt = pathOutput + "1.txt";
 
             Application app = new Application();
             app.Visible = false;
