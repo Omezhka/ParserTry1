@@ -252,6 +252,7 @@ namespace regexpParse
             //тут как раз таки плодится много документов с фио каждого препода
             var nameOfFile = new List<string>();
 
+
             foreach (var t in notifications)
             {
                 var filenamedd = pathOutput + @"prepods\" + t.teacher.fullname + ".docx";
@@ -336,25 +337,23 @@ namespace regexpParse
                         falseWeekSchedule.Add($" {notifications[i].scheduleList[k].group}" +
                                              $" {"a." + notifications[i].scheduleList[k].audience}");
 
-                        //tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("нечет: " + $"{notifications[i].scheduleList[k].classhours} " +
-                        //                                                                   $"{notifications[i].scheduleList[k].group} " +
-                        //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
-                    }
-                    foreach (var w in trueWeekSchedule)
-                    {
-                        // тут я пыталась обмануть судьбу и сравнивать название файла и фамилию препода и выводить его расписание,
-                        // но что-то пошло не так
-                        foreach (var item in nameOfFile)
-                        {
-                            if ((notifications[i].teacher.fullname + ".docx").Equals(item[i]))
-                                tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($" { notifications[i].teacher.fullname} {notifications[i].scheduleList[k].group}" +
-                                                                                                    $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
+                                //tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("нечет: " + $"{notifications[i].scheduleList[k].classhours} " +
+                                //                                                                   $"{notifications[i].scheduleList[k].group} " +
+                                //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
+                            }
+                            foreach (var w in trueWeekSchedule)
+                            {
+                                foreach (var item in nameOfFile)
+                                {
+                                    if ((notifications[i].teacher.fullname + ".docx").Equals(item[i]))
+                                        tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($" { notifications[i].teacher.fullname} {notifications[i].scheduleList[k].group}" +
+                                                                                                            $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
+                                }
+                                    //tbltst.Cell(i+1, indexDayPosition+2).Range.InsertAfter("zhopa");
+                                
+                            }
                         }
-                        //tbltst.Cell(i+1, indexDayPosition+2).Range.InsertAfter("zhopa");
-
-                    }
-                }
-
+                    
 
             }
 
