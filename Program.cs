@@ -26,8 +26,8 @@ namespace regexpParse
             string pathOutput = AppDomain.CurrentDomain.BaseDirectory + @"outputDocuments\";
             //путь для выходных
             string filename = path + "1.doc";
+            string filenametxt = path + "1.txt";
 
-            string filenametxt = pathOutput + "1.txt";
 
             Application app = new Application();
             app.Visible = false;
@@ -41,7 +41,12 @@ namespace regexpParse
             {
                 Console.WriteLine(e.Message);
             }
+
             app.ActiveDocument.Close();
+            if (!Directory.Exists(pathOutput))
+            {
+                Directory.CreateDirectory(pathOutput);
+            }
 
             using (StreamReader sr = new StreamReader(filenametxt, System.Text.Encoding.Default))
             {
@@ -110,8 +115,6 @@ namespace regexpParse
                     Console.WriteLine($"{y.group} {y.Week}");
                 }
             }
-
-
 
             var options = new JsonSerializerOptions
             {
@@ -196,169 +199,131 @@ namespace regexpParse
                 i++;
 
             }
-            //tbl.Cell(2,2).Split(2);
+
             // тут как раз таки заполнение таблицы, тут нафигачила ненужных списков(как мне кажется) пар по четной и нечетной неделе
             // пытаюсь вывести расписание по четности недели
+            var trueWeekSchedule = new List<string>();
+            var falseWeekSchedule = new List<string>();
+
             for (i = 0; i < teacherCount; i++) //столбец
             {
                 for (var k = 0; k < notifications[i].scheduleList.Count; k++) // строка
                 {
                     int indexDayPosition = 0;
-                    var trueWeekSchedule = new List<string>();
-                    var falseWeekSchedule = new List<string>();
+
                     indexDayPosition = week.IndexOf(notifications[i].scheduleList[k].days);
 
                     if (notifications[i].scheduleList[k].Week)
                     {
-                        trueWeekSchedule.Add($"{notifications[i].scheduleList[k].classhours}" +
-                                             $" {notifications[i].scheduleList[k].group}" +
-                                             $" {"a." + notifications[i].scheduleList[k].audience}");
 
-                        //    tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("чет: " + $"{notifications[i].scheduleList[k].classhours}" +
-                        //                                                                     $" {notifications[i].scheduleList[k].group}" +
-                        //                                                                     $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
+                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($" { "чет: "}" +
+                                                                                $" { notifications[i].scheduleList[k].classhours }" +
+                                                                                $" { notifications[i].scheduleList[k].group }" +
+                                                                                $" { "a." + notifications[i].scheduleList[k].audience }\r\n");
                     }
                     else
                     {
-                        falseWeekSchedule.Add($"{notifications[i].scheduleList[k].classhours}" +
-                                             $" {notifications[i].scheduleList[k].group}" +
-                                             $" {"a." + notifications[i].scheduleList[k].audience}");
-
-                        //tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("нечет: " + $"{notifications[i].scheduleList[k].classhours} " +
-                        //                                                                   $"{notifications[i].scheduleList[k].group} " +
-                        //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
+                     
+                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($" { "нечет: "}" + 
+                                                                                $" { notifications[i].scheduleList[k].classhours }" +
+                                                                                $" { notifications[i].scheduleList[k].group }" +
+                                                                                $" { "a." + notifications[i].scheduleList[k].audience }\r\n");
                     }
-                    // сейчас выводит пары по четной недели, потому что у меня была такая тактика, и я ее придерживалась
-                    foreach (var w in trueWeekSchedule)
-                    {
-                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("zhopa");
-
-                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($"{notifications[i].scheduleList[k].classhours}" +
-                                                                                         $" {notifications[i].scheduleList[k].group}" +
-                                                                                        $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
-                    }
-
                 }
             }
 
+            var trueWeekSchedule_2 = new List<string>();
+            var falseWeekSchedule_2 = new List<string>();
 
+            CreatePersonalSchedule(app, notifications, week, trueWeekSchedule_2, falseWeekSchedule_2);
 
+            Console.ReadKey();
+            app.Documents.Close(WdSaveOptions.wdDoNotSaveChanges);
+            app.Quit();
+        }
+        //ВТОРОЙ
 
-            //app.Visible = false;
-            // тут я создаю новый документ с расписанием одного препода
-            // не пониманию как их создать много
-
-            Document teacherScheduleTable = app.Documents.Add();
-            //тут как раз таки плодится много документов с фио каждого препода
-            var nameOfFile = new List<string>();
-
-
-            foreach (var t in notifications)
-            {
-                var filenamedd = pathOutput + @"prepods\" + t.teacher.fullname + ".docx";
-                teacherScheduleTable.SaveAs2(filenamedd, WdSaveFormat.wdFormatDocumentDefault);
-                nameOfFile.Add(System.IO.Path.GetFileName(filenamedd));
-
-            }
-            // а рисуется только в последнем созданном доке
-            // свойства
-            teacherScheduleTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
-            teacherScheduleTable.Paragraphs.Add();
-            //это по аналогии с предыдущим доком
+        private static void CreatePersonalSchedule(Application app, List<Notification> notifications, List<string> week, List<string> trueWeekSchedule, List<string> falseWeekSchedule)
+        {
             var classhours = new List<string>
-                {
+            {
                     "08.30-10.00",
                     "10.10-11.40",
                     "11.50-13.20",
                     "13.50-15.20",
                     "15.30-17.00",
                     "17.10-18.40"
-                };
+            };
 
-            Range rngtst = teacherScheduleTable.Paragraphs[1].Range;
+            int c = 0;
 
-            rngtst.InsertBefore("РАСПИСАНИЕ ВАШИХ ЗАНЯТИЙ НА 1 - е ПОЛУГОДИЕ 2020 / 2021 УЧЕБНОГО ГОДА");
-            rngtst.InsertParagraphAfter();
-            rngtst.Font.Name = "Times New Roman";
-            rngtst.Font.Size = 16;
-            rngtst.Font.Bold = 1;
-            rngtst.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-
-
-
-            rngtst.Tables.Add(teacherScheduleTable.Paragraphs[3].Range, classhours.Count + 1, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
-
-            Table tbltst = teacherScheduleTable.Tables[1];
-            tbltst.Range.Font.Size = 10;
-
-            tbltst.Columns.DistributeWidth();
-
-            tbltst.Rows[1].Range.Font.Bold = 1;
-
-            tbltst.Cell(1, 1).Range.Text = " ";
-            tbltst.Cell(1, 2).Range.Text = "Понедельник";
-            tbltst.Cell(1, 3).Range.Text = "Вторник";
-            tbltst.Cell(1, 4).Range.Text = "Среда";
-            tbltst.Cell(1, 5).Range.Text = "Четверг";
-            tbltst.Cell(1, 6).Range.Text = "Пятница";
-            tbltst.Cell(1, 7).Range.Text = "Суббота";
-
-
-            for (i = 2; i <= classhours.Count + 1;)
-            {
-                tbltst.Cell(i, 1).Range.Text = classhours[i - 2];
-                i++;
-
-            }
-            //tbl.Cell(2,2).Split(2);
-            //тут та же проблема с определением четности
-            for (i = 0; i < classhours.Count; i++) //столбец
-            {
-                for (var k = 0; k < notifications[i].scheduleList.Count; k++) // строка
+            if(c <= notifications.Count) {
+                foreach (var variable in notifications)
                 {
-                    var indexDayPosition = 0;
-                    var indexClasshoursPosition = 0;
-                    var trueWeekSchedule = new List<string>();
-                    var falseWeekSchedule = new List<string>();
-                    indexDayPosition = week.IndexOf(notifications[i].scheduleList[k].days);
-                    indexClasshoursPosition = classhours.IndexOf(notifications[i].scheduleList[k].classhours);
+                    Document teacherScheduleTable = app.Documents.Add();
+   
+                    teacherScheduleTable.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+                    teacherScheduleTable.Paragraphs.Add();
 
-                    if (notifications[i].scheduleList[k].Week)
+                    Range rngtst = teacherScheduleTable.Paragraphs[1].Range;
+
+                    rngtst.InsertBefore("РАСПИСАНИЕ ВАШИХ ЗАНЯТИЙ НА 1 - е ПОЛУГОДИЕ 2020 / 2021 УЧЕБНОГО ГОДА");
+                    rngtst.InsertParagraphAfter();
+                    rngtst.Font.Name = "Times New Roman";
+                    rngtst.Font.Size = 16;
+                    rngtst.Font.Bold = 1;
+                    rngtst.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+
+                    rngtst.Tables.Add(teacherScheduleTable.Paragraphs[3].Range, classhours.Count + 1, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
+
+                    Table tbltst = teacherScheduleTable.Tables[1];
+                    tbltst.Range.Font.Size = 10;
+
+                    tbltst.Columns.DistributeWidth();
+
+                    tbltst.Rows[1].Range.Font.Bold = 1;
+
+                    tbltst.Cell(1, 1).Range.Text = " ";
+                    tbltst.Cell(1, 2).Range.Text = "Понедельник";
+                    tbltst.Cell(1, 3).Range.Text = "Вторник";
+                    tbltst.Cell(1, 4).Range.Text = "Среда";
+                    tbltst.Cell(1, 5).Range.Text = "Четверг";
+                    tbltst.Cell(1, 6).Range.Text = "Пятница";
+                    tbltst.Cell(1, 7).Range.Text = "Суббота";
+
+
+                    for (var i = 2; i <= classhours.Count + 1;)
                     {
-                        trueWeekSchedule.Add($" { notifications[i].teacher.fullname} {notifications[i].scheduleList[k].group}" +
-                                             $" {"a." + notifications[i].scheduleList[k].audience}");
+                        tbltst.Cell(i, 1).Range.Text = classhours[i - 2];
+                        i++;
 
-                        //    tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("чет: " + $"{notifications[i].scheduleList[k].classhours}" +
-                        //                                                                     $" {notifications[i].scheduleList[k].group}" +
-                        //                                                                     $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
                     }
-                    else
+
+                    for (var k = 0; k < notifications[c].scheduleList.Count; k++) //столбец
                     {
-                        falseWeekSchedule.Add($" {notifications[i].scheduleList[k].group}" +
-                                             $" {"a." + notifications[i].scheduleList[k].audience}");
+                        var indexDayPosition = 0;
+                        var indexClasshoursPosition = 0;
 
-                                //tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter("нечет: " + $"{notifications[i].scheduleList[k].classhours} " +
-                                //                                                                   $"{notifications[i].scheduleList[k].group} " +
-                                //                                                                   $"{"a." + notifications[i].scheduleList[k].audience}\r\n");
-                            }
-                            foreach (var w in trueWeekSchedule)
-                            {
-                                foreach (var item in nameOfFile)
-                                {
-                                    if ((notifications[i].teacher.fullname + ".docx").Equals(item[i]))
-                                        tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($" { notifications[i].teacher.fullname} {notifications[i].scheduleList[k].group}" +
-                                                                                                            $" {"a." + notifications[i].scheduleList[k].audience}\r\n");
-                                }
-                                    //tbltst.Cell(i+1, indexDayPosition+2).Range.InsertAfter("zhopa");
-                                
-                            }
+                        indexDayPosition = week.IndexOf(notifications[c].scheduleList[k].days);
+                        indexClasshoursPosition = classhours.IndexOf(notifications[c].scheduleList[k].classhours);
+
+                        if (notifications[c].scheduleList[k].Week)
+                        {
+                            tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($"{"чет: "} { notifications[c].teacher.fullname} " +
+                                                                                                             $"{notifications[c].scheduleList[k].group}" +
+                                                                                                             $" {"a." + notifications[c].scheduleList[k].audience}\r\n");
                         }
-                    
+                        else
+                        {
+                            tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($"{"нечет: "} { notifications[c].teacher.fullname} " +
+                                                                                                             $"{notifications[c].scheduleList[k].group}" +
+                                                                                                             $" {"a." + notifications[c].scheduleList[k].audience}\r\n");
+                        }
+                    }
 
+                    c++;
+                }  
             }
-
-
-            Console.ReadKey();
         }
 
         public static void Convert2txt(Document doc)
