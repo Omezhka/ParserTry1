@@ -156,6 +156,7 @@ namespace regexpParse
 
             Range rng = docTable.Paragraphs[1].Range;
 
+
             rng.InsertBefore("РАСПИСАНИЕ ЗАНЯТИЙ ПРЕПОДАВАТЕЛЕЙ КАФЕДРЫ " +
                 "ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И ЗАЩИТЫ ИНФОРМАЦИИ " +
                 "НА 1 - е ПОЛУГОДИЕ 2020 / 2021 УЧЕБНОГО ГОДА");
@@ -170,11 +171,14 @@ namespace regexpParse
 
             //тут всё закручено на Range
             Table tbl = docTable.Tables[1];
-            tbl.Range.Font.Size = 10;
+            tbl.Range.Font.Size = 9;
+            tbl.Range.Font.Name = "Times New Roman";
+            tbl.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+            
             //это настройки таблицы
             tbl.Columns.DistributeWidth();
             tbl.Rows[1].Range.Font.Bold = 1;
-            // ну, заполнение шапки таблицы))
+
             tbl.Cell(1, 1).Range.Text = "Ф.И.О. преподавателя";
             tbl.Cell(1, 2).Range.Text = "Понедельник";
             tbl.Cell(1, 3).Range.Text = "Вторник";
@@ -182,6 +186,7 @@ namespace regexpParse
             tbl.Cell(1, 5).Range.Text = "Четверг";
             tbl.Cell(1, 6).Range.Text = "Пятница";
             tbl.Cell(1, 7).Range.Text = "Суббота";
+
             // этот список для раскидывания занятий по ячейкам соотв. дня недели
             var week = new List<string>
             {
@@ -195,15 +200,12 @@ namespace regexpParse
             // вывод преподов 
             for (i = 2; i <= teacherCount + 1;)
             {
-                tbl.Cell(i, 1).Range.Text = $"{notifications[i - 2].teacher.position} {notifications[i - 2].teacher.fullname}";
+                tbl.Cell(i, 1).Range.Text = $"{notifications[i - 2].teacher.position}\r\n{notifications[i - 2].teacher.fullname}";
                 i++;
-
+                tbl.Cell(i-1, 1).Range.Font.Bold = 1;
+                tbl.Cell(i - 1, 1).Range.Font.Size = 12;
+                tbl.Cell(i - 1, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
             }
-
-            // тут как раз таки заполнение таблицы, тут нафигачила ненужных списков(как мне кажется) пар по четной и нечетной неделе
-            // пытаюсь вывести расписание по четности недели
-            var trueWeekSchedule = new List<string>();
-            var falseWeekSchedule = new List<string>();
 
             for (i = 0; i < teacherCount; i++) //столбец
             {
@@ -213,29 +215,26 @@ namespace regexpParse
 
                     indexDayPosition = week.IndexOf(notifications[i].scheduleList[k].days);
 
+                    tbl.Cell(i + 2, indexDayPosition + 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
                     if (notifications[i].scheduleList[k].Week)
                     {
-
-                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($" { "чет: "}" +
-                                                                                $" { notifications[i].scheduleList[k].classhours }" +
-                                                                                $" { notifications[i].scheduleList[k].group }" +
-                                                                                $" { "a." + notifications[i].scheduleList[k].audience }\r\n");
+                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($"{"чет: "}" +
+                                                                                $"{notifications[i].scheduleList[k].classhours } " +
+                                                                                $"{notifications[i].scheduleList[k].group } " +
+                                                                                $"{"a." + notifications[i].scheduleList[k].audience }\r\n");
                     }
                     else
                     {
-                     
-                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($" { "нечет: "}" + 
-                                                                                $" { notifications[i].scheduleList[k].classhours }" +
-                                                                                $" { notifications[i].scheduleList[k].group }" +
-                                                                                $" { "a." + notifications[i].scheduleList[k].audience }\r\n");
-                    }
+                        tbl.Cell(i + 2, indexDayPosition + 2).Range.InsertAfter($"{"нечет: "}" +
+                                                                                $"{notifications[i].scheduleList[k].classhours } " +
+                                                                                $"{notifications[i].scheduleList[k].group } " +
+                                                                                $"{"a." + notifications[i].scheduleList[k].audience }\r\n");
+                    }    
                 }
             }
 
-            var trueWeekSchedule_2 = new List<string>();
-            var falseWeekSchedule_2 = new List<string>();
-
-            CreatePersonalSchedule(app, notifications, week, trueWeekSchedule_2, falseWeekSchedule_2);
+            CreatePersonalSchedule(app, notifications, week);
 
             Console.ReadKey();
             app.Documents.Close(WdSaveOptions.wdDoNotSaveChanges);
@@ -243,7 +242,7 @@ namespace regexpParse
         }
         //ВТОРОЙ
 
-        private static void CreatePersonalSchedule(Application app, List<Notification> notifications, List<string> week, List<string> trueWeekSchedule, List<string> falseWeekSchedule)
+        private static void CreatePersonalSchedule(Application app, List<Notification> notifications, List<string> week)
         {
             var classhours = new List<string>
             {
@@ -277,7 +276,10 @@ namespace regexpParse
                     rngtst.Tables.Add(teacherScheduleTable.Paragraphs[3].Range, classhours.Count + 1, 7, WdDefaultTableBehavior.wdWord9TableBehavior, WdAutoFitBehavior.wdAutoFitWindow);
 
                     Table tbltst = teacherScheduleTable.Tables[1];
-                    tbltst.Range.Font.Size = 10;
+                    
+                    tbltst.Range.Font.Size = 9;
+                    tbltst.Range.Font.Name = "Times New Roman";
+                    tbltst.Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
 
                     tbltst.Columns.DistributeWidth();
 
@@ -296,7 +298,9 @@ namespace regexpParse
                     {
                         tbltst.Cell(i, 1).Range.Text = classhours[i - 2];
                         i++;
-
+                        tbltst.Cell(i - 1, 1).Range.Font.Bold = 1;
+                        tbltst.Cell(i - 1, 1).Range.Font.Size = 12;
+                        tbltst.Cell(i - 1, 1).VerticalAlignment = WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                     }
 
                     for (var k = 0; k < notifications[c].scheduleList.Count; k++) //столбец
@@ -307,17 +311,19 @@ namespace regexpParse
                         indexDayPosition = week.IndexOf(notifications[c].scheduleList[k].days);
                         indexClasshoursPosition = classhours.IndexOf(notifications[c].scheduleList[k].classhours);
 
+                        tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphLeft;
+
                         if (notifications[c].scheduleList[k].Week)
                         {
-                            tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($"{"чет: "} { notifications[c].teacher.fullname} " +
-                                                                                                             $"{notifications[c].scheduleList[k].group}" +
-                                                                                                             $" {"a." + notifications[c].scheduleList[k].audience}\r\n");
+                            tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($"{"чет:"} {notifications[c].teacher.fullname } " +
+                                                                                                             $"{notifications[c].scheduleList[k].group } " +
+                                                                                                             $"{"a." + notifications[c].scheduleList[k].audience }\r\n");
                         }
                         else
                         {
-                            tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($"{"нечет: "} { notifications[c].teacher.fullname} " +
-                                                                                                             $"{notifications[c].scheduleList[k].group}" +
-                                                                                                             $" {"a." + notifications[c].scheduleList[k].audience}\r\n");
+                            tbltst.Cell(indexClasshoursPosition + 2, indexDayPosition + 2).Range.InsertAfter($"{"нечет:"} {notifications[c].teacher.fullname } " +
+                                                                                                             $"{notifications[c].scheduleList[k].group } " +
+                                                                                                             $"{"a." + notifications[c].scheduleList[k].audience }\r\n");
                         }
                     }
 
