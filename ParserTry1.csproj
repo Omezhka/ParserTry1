@@ -100,6 +100,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="outputDocuments\prepods\" />
+    <Folder Include="prepods\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
